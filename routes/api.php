@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\ResponseController;
@@ -9,57 +11,46 @@ use App\Http\Controllers\UsageController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\TeamController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AiResponseController;
 
-// Public routes
-Route::post('/register', [AuthController::class, 'register']);
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
-// Protected routes
+Route::put('/user', [AuthController::class, 'update'])->middleware('auth:sanctum');
+Route::put('/user/notification-settings', [AuthController::class, 'updateNotificationSettings'])->middleware('auth:sanctum');
+
 Route::middleware('auth:sanctum')->group(function () {
-    // Auth
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
-    Route::put('/user', [AuthController::class, 'updateUser']);
-    Route::put('/user/notification-settings', [AuthController::class, 'updateNotificationSettings']);
-
-    // Businesses
+    // Business
     Route::get('/businesses', [BusinessController::class, 'index']);
     Route::post('/businesses', [BusinessController::class, 'store']);
     Route::get('/businesses/{business}', [BusinessController::class, 'show']);
     Route::put('/businesses/{business}', [BusinessController::class, 'update']);
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy']);
+    Route::post('/businesses/{business}/responses', [ResponseController::class, 'generate']);
 
     // Reviews
     Route::get('/reviews', [ReviewController::class, 'index']);
-    Route::post('/reviews', [ReviewController::class, 'store']);
-    Route::get('/reviews/{review}', [ReviewController::class, 'show']);
+    Route::post('/reviews', [ReviewController::class, 'import']);
     Route::put('/reviews/{review}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
-    Route::post('/reviews/import', [ReviewController::class, 'import']);
 
-    // AI Responses
-    Route::post('/reviews/{review}/generate-response', [ResponseController::class, 'generate']);
-    Route::post('/responses/{response}/regenerate', [ResponseController::class, 'regenerate']);
-    Route::get('/reviews/{review}/responses', [ResponseController::class, 'history']);
+    // Response
+    Route::post('/responses/generate', [ResponseController::class, 'generate']);
+    Route::get('/responses/templates', [ResponseController::class, 'templates']);
 
-    // Subscription
-    Route::get('/subscription', [SubscriptionController::class, 'show']);
-    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout']);
+    // Analytics
+    Route::get('/analytics', [AnalyticsController::class, 'index']);
 
-    // Usage
-    Route::get('/usage', [UsageController::class, 'index']);
-
-    // Integrations (Google/Yelp)
+    // Integrations
     Route::get('/integrations/status', [IntegrationController::class, 'status']);
     Route::post('/integrations/google/search', [IntegrationController::class, 'searchGoogle']);
     Route::post('/integrations/google/sync', [IntegrationController::class, 'syncGoogle']);
     Route::post('/integrations/yelp/search', [IntegrationController::class, 'searchYelp']);
     Route::post('/integrations/yelp/sync', [IntegrationController::class, 'syncYelp']);
-    Route::post('/integrations/sync-all', [IntegrationController::class, 'syncAll']);
-
-    // Analytics
-    Route::get('/analytics', [AnalyticsController::class, 'index']);
 
     // Team Management
     Route::get('/businesses/{business}/team', [TeamController::class, 'index']);
@@ -71,6 +62,3 @@ Route::middleware('auth:sanctum')->group(function () {
     // Review Requests
     Route::post('/businesses/{business}/send-review-request', [TeamController::class, 'sendReviewRequest']);
 });
-
-// Stripe Webhook (no auth, uses signature verification)
-Route::post('/webhooks/stripe', [SubscriptionController::class, 'webhook']);

@@ -7,6 +7,7 @@ use App\Models\TeamMember;
 use App\Models\User;
 use App\Notifications\ReviewRequestNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -17,7 +18,9 @@ class TeamController extends Controller
      */
     public function index(Request $request, Business $business)
     {
-        $this->authorize('manageTeam', $business);
+        if (!Gate::allows('manageTeam', $business)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $members = $business->teamMembers()
             ->with('user:id,name,email')
@@ -33,7 +36,9 @@ class TeamController extends Controller
      */
     public function invite(Request $request, Business $business)
     {
-        $this->authorize('manageTeam', $business);
+        if (!Gate::allows('manageTeam', $business)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $validated = $request->validate([
             'email' => 'required|email|max:255',
@@ -89,7 +94,9 @@ class TeamController extends Controller
      */
     public function updateRole(Request $request, Business $business, TeamMember $member)
     {
-        $this->authorize('manageTeam', $business);
+        if (!Gate::allows('manageTeam', $business)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $validated = $request->validate([
             'role' => 'required|in:admin,manager,viewer',
@@ -112,7 +119,9 @@ class TeamController extends Controller
      */
     public function remove(Business $business, TeamMember $member)
     {
-        $this->authorize('manageTeam', $business);
+        if (!Gate::allows('manageTeam', $business)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         if ($member->business_id !== $business->id) {
             return response()->json(['error' => 'Not found'], 404);
@@ -135,7 +144,9 @@ class TeamController extends Controller
      */
     public function sendReviewRequest(Request $request, Business $business)
     {
-        $this->authorize('manageTeam', $business);
+        if (!Gate::allows('manageTeam', $business)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
