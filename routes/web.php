@@ -27,6 +27,10 @@ Route::get('/reviews', function () {
     return view('pages.reviews');
 })->name('reviews');
 
+Route::get('/analytics', function () {
+    return view('pages.analytics');
+})->name('analytics');
+
 Route::get('/settings', function () {
     return view('pages.settings');
 })->name('settings');
