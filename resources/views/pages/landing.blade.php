@@ -15,8 +15,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear:gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d1f4e 50%, #1a1a3e 75%, #0f0f23 100%);
-    background-size: 400% 400%;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+    background-size: 200% 200%;
     animation: gradientShift 15s ease infinite;
     z-index: 0;
 }
@@ -37,29 +37,29 @@
 }
 
 .hero-orb-1 {
-    width: 400px;
-    height: 400px;
-    background: #4F46E5;
-    top: -100px;
+    width: 500px;
+    height: 500px;
+    background: rgba(99, 102, 241, 0.5);
+    top: -150px;
     right: -100px;
     animation-delay: 0s;
 }
 
 .hero-orb-2 {
-    width: 300px;
-    height: 300px;
-    background: #10B981;
-    bottom: -50px;
+    width: 400px;
+    height: 400px;
+    background: rgba(79, 70, 229, 0.4);
+    bottom: -100px;
     left: -50px;
     animation-delay: -4s;
 }
 
 .hero-orb-3 {
-    width: 200px;
-    height: 200px;
-    background: #F59E0B;
-    top: 50%;
-    left: 30%;
+    width: 300px;
+    height: 300px;
+    background: rgba(139, 92, 246, 0.3);
+    top: 30%;
+    left: 20%;
     animation-delay: -2s;
 }
 
@@ -166,10 +166,10 @@
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background: rgba(79, 70, 229, 0.2);
-    border: 1px solid rgba(79, 70, 229, 0.3);
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
     border-radius: 50px;
-    color: #818cf8;
+    color: #c4b5fd;
     font-size: 0.875rem;
     font-weight: 500;
     margin-bottom: 24px;
@@ -179,7 +179,7 @@
 .hero-badge-dot {
     width: 8px;
     height: 8px;
-    background: #10B981;
+    background: #a78bfa;
     border-radius: 50%;
     animation: pulse 2s ease infinite;
 }
@@ -199,7 +199,7 @@
 }
 
 .hero-title-gradient {
-    background: linear-gradient(135deg, #4F46E5, #10B981, #F59E0B);
+    background: linear-gradient(135deg, #a5b4fc, #818cf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -241,16 +241,16 @@
 }
 
 .btn-primary-gradient {
-    background: linear-gradient(135deg, #4F46E5, #6366f1);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white;
     border: none;
-    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
     transition: all 0.3s ease;
 }
 
 .btn-primary-gradient:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.5);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
 }
 
 .btn-glass {
