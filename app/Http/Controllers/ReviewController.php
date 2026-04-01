@@ -143,11 +143,26 @@ class ReviewController extends Controller
 
         foreach ($validated['reviews'] as $reviewData) {
             $reviewData['business_id'] = $validated['business_id'];
+            
+            // Default review_date to today if not provided
+            if (empty($reviewData['review_date'])) {
+                $reviewData['review_date'] = now()->format('Y-m-d');
+            }
 
-            // Check if already exists
-            $exists = Review::where('business_id', $validated['business_id'])
-                ->where('external_id', $reviewData['external_id'] ?? null)
-                ->exists();
+            // Check if already exists (handle null external_id properly)
+            $existsQuery = Review::where('business_id', $validated['business_id']);
+            
+            if (!empty($reviewData['external_id'])) {
+                $existsQuery->where('external_id', $reviewData['external_id']);
+            } else {
+                // For reviews without external_id, check by author + rating + text + same day
+                $existsQuery->where(function ($q) use ($reviewData) {
+                    $q->where('author_name', $reviewData['author_name'])
+                      ->where('rating', $reviewData['rating']);
+                });
+            }
+            
+            $exists = $existsQuery->exists();
 
             if ($exists) {
                 $skipped++;

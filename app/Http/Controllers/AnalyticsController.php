@@ -31,7 +31,15 @@ class AnalyticsController extends Controller
             $query->where('business_id', $businessId);
         }
         
-        $query->whereBetween('review_date', [$startDate, $endDate]);
+        // Handle NULL review_dates by using COALESCE with created_at
+        $query->where(function ($q) use ($startDate, $endDate) {
+            $q->whereBetween('review_date', [$startDate, $endDate])
+              ->orWhere(function ($q2) use ($startDate, $endDate) {
+                  // Also include reviews with NULL review_date but within created_at range
+                  $q2->whereNull('review_date')
+                      ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+              });
+        });
 
         $reviews = $query->get();
 
@@ -106,16 +114,23 @@ class AnalyticsController extends Controller
      */
     protected function getSentimentByWeek($businessId, $startDate, $endDate)
     {
+        // Use COALESCE to handle NULL review_dates (default to created_at)
         $query = Review::query()
             ->select(
-                DB::raw("YEARWEEK(review_date, 1) as year_week"),
+                DB::raw("YEARWEEK(COALESCE(review_date, created_at), 1) as year_week"),
                 DB::raw("COUNT(*) as total"),
                 DB::raw("SUM(CASE WHEN sentiment = 'positive' THEN 1 ELSE 0 END) as positive"),
                 DB::raw("SUM(CASE WHEN sentiment = 'neutral' THEN 1 ELSE 0 END) as neutral"),
                 DB::raw("SUM(CASE WHEN sentiment = 'negative' THEN 1 ELSE 0 END) as negative")
             )
-            ->whereBetween('review_date', [$startDate, $endDate])
-            ->groupBy(DB::raw("YEARWEEK(review_date, 1)"))
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('review_date', [$startDate, $endDate])
+                  ->orWhere(function ($q2) use ($startDate, $endDate) {
+                      $q2->whereNull('review_date')
+                          ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                  });
+            })
+            ->groupBy(DB::raw("YEARWEEK(COALESCE(review_date, created_at), 1)"))
             ->orderBy('year_week');
 
         if ($businessId) {
@@ -143,7 +158,13 @@ class AnalyticsController extends Controller
     {
         $query = Review::query()
             ->select('rating', DB::raw('COUNT(*) as count'))
-            ->whereBetween('review_date', [$startDate, $endDate])
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('review_date', [$startDate, $endDate])
+                  ->orWhere(function ($q2) use ($startDate, $endDate) {
+                      $q2->whereNull('review_date')
+                          ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                  });
+            })
             ->groupBy('rating')
             ->orderBy('rating', 'desc');
 
@@ -176,7 +197,13 @@ class AnalyticsController extends Controller
     {
         $query = Response::query()
             ->join('reviews', 'responses.review_id', '=', 'reviews.id')
-            ->whereBetween('reviews.review_date', [$startDate, $endDate]);
+            ->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('reviews.review_date', [$startDate, $endDate])
+                  ->orWhere(function ($q2) use ($startDate, $endDate) {
+                      $q2->whereNull('reviews.review_date')
+                          ->whereBetween('reviews.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                  });
+            });
 
         if ($businessId) {
             $query->where('reviews.business_id', $businessId);
@@ -250,20 +277,20 @@ class AnalyticsController extends Controller
 
         $query = Review::query()
             ->select(
-                DB::raw("DATE_FORMAT(review_date, '%Y-%m') as month"),
+                DB::raw("DATE_FORMAT(COALESCE(review_date, created_at), '%Y-%m') as month"),
                 DB::raw('COUNT(*) as total'),
                 DB::raw("SUM(CASE WHEN sentiment = 'positive' THEN 1 ELSE 0 END) as positive"),
                 DB::raw("SUM(CASE WHEN sentiment = 'negative' THEN 1 ELSE 0 END) as negative"),
                 DB::raw("AVG(rating) as avg_rating"),
                 DB::raw("SUM(CASE WHEN is_responded = 1 THEN 1 ELSE 0 END) as responded")
             )
-            ->groupBy(DB::raw("DATE_FORMAT(review_date, '%Y-%m')"));
+            ->groupBy(DB::raw("DATE_FORMAT(COALESCE(review_date, created_at), '%Y-%m')"));
 
         if ($businessId) {
             $query->where('business_id', $businessId);
         }
 
-        $results = $query->whereIn(DB::raw("DATE_FORMAT(review_date, '%Y-%m')"), [$currentMonth, $previousMonth])
+        $results = $query->whereIn(DB::raw("DATE_FORMAT(COALESCE(review_date, created_at), '%Y-%m')"), [$currentMonth, $previousMonth])
             ->get()
             ->keyBy('month');
 
