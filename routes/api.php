@@ -8,6 +8,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UsageController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -59,6 +60,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index']);
+
+    // Team Management
+    Route::get('/businesses/{business}/team', [TeamController::class, 'index']);
+    Route::post('/businesses/{business}/team/invite', [TeamController::class, 'invite']);
+    Route::put('/businesses/{business}/team/{member}/role', [TeamController::class, 'updateRole']);
+    Route::delete('/businesses/{business}/team/{member}', [TeamController::class, 'remove']);
+    Route::get('/businesses/{business}/permissions', [TeamController::class, 'getPermissions']);
+
+    // Review Requests
+    Route::post('/businesses/{business}/send-review-request', [TeamController::class, 'sendReviewRequest']);
 });
 
 // Stripe Webhook (no auth, uses signature verification)
