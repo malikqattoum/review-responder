@@ -1,0 +1,50 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\ResponseController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UsageController;
+use Illuminate\Support\Facades\Route;
+
+// Public routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+
+    // Businesses
+    Route::get('/businesses', [BusinessController::class, 'index']);
+    Route::post('/businesses', [BusinessController::class, 'store']);
+    Route::get('/businesses/{business}', [BusinessController::class, 'show']);
+    Route::put('/businesses/{business}', [BusinessController::class, 'update']);
+    Route::delete('/businesses/{business}', [BusinessController::class, 'destroy']);
+
+    // Reviews
+    Route::get('/reviews', [ReviewController::class, 'index']);
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::get('/reviews/{review}', [ReviewController::class, 'show']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+    Route::post('/reviews/import', [ReviewController::class, 'import']);
+
+    // AI Responses
+    Route::post('/reviews/{review}/generate-response', [ResponseController::class, 'generate']);
+    Route::post('/responses/{response}/regenerate', [ResponseController::class, 'regenerate']);
+    Route::get('/reviews/{review}/responses', [ResponseController::class, 'history']);
+
+    // Subscription
+    Route::get('/subscription', [SubscriptionController::class, 'show']);
+    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout']);
+
+    // Usage
+    Route::get('/usage', [UsageController::class, 'index']);
+});
+
+// Stripe Webhook (no auth, uses signature verification)
+Route::post('/webhooks/stripe', [SubscriptionController::class, 'webhook']);
