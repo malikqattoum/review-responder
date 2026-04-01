@@ -15,7 +15,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d1f4e 50%, #1a1a3e 75%, #0f0f23 100%);
+    background: linear:gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d1f4e 50%, #1a1a3e 75%, #0f0f23 100%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     z-index: 0;
@@ -322,7 +322,7 @@
     color: #818cf8;
     font-size: 0.8125rem;
     font-weight: 600;
-    text-transform: uppercase;
+    text-uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 16px;
 }
@@ -391,15 +391,6 @@
     line-height: 1.7;
 }
 
-.step-icon {
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    width: 48px;
-    height: 48px;
-    opacity: 0.3;
-}
-
 /* Features Section */
 .landing-features {
     padding: 120px 40px;
@@ -458,6 +449,33 @@
     color: rgba(255, 255, 255, 0.55);
     font-size: 0.9375rem;
     line-height: 1.7;
+}
+
+/* Integration Logos */
+.integration-logos {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.integration-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.integration-logo svg {
+    width: 24px;
+    height: 24px;
 }
 
 /* Testimonials */
@@ -875,6 +893,7 @@
         <div class="nav-links">
             <a href="#features">Features</a>
             <a href="#how-it-works">How It Works</a>
+            <a href="#integrations">Integrations</a>
             <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
         </div>
@@ -918,6 +937,21 @@
                     Watch Demo
                 </a>
             </div>
+            
+            <div class="integration-logos">
+                <div class="integration-logo">
+                    <svg viewBox="0 0 24 24" fill="#4285F4"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Google
+                </div>
+                <div class="integration-logo">
+                    <svg viewBox="0 0 24 24" fill="#FF1A1A"><path d="M8.6 2.6A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h-2V4H8v16h4v-4h2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8H6v2h2z"/></svg>
+                    Yelp
+                </div>
+                <div class="integration-logo">
+                    <svg viewBox="0 0 24 24" fill="#10B981"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    OpenRouter
+                </div>
+            </div>
         </div>
     </section>
     
@@ -952,32 +986,20 @@
         <div class="steps-grid">
             <div class="step-card">
                 <div class="step-number">1</div>
-                <h3 class="step-title">Import Your Reviews</h3>
-                <p class="step-description">Connect your Google Business or Yelp, or simply import via CSV. Your reviews appear instantly in your dashboard.</p>
-                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
+                <h3 class="step-title">Sync Your Reviews</h3>
+                <p class="step-description">Connect Google or Yelp for automatic syncing, or import via CSV. Your reviews appear instantly in your dashboard.</p>
             </div>
             
             <div class="step-card">
                 <div class="step-number">2</div>
                 <h3 class="step-title">AI Generates Responses</h3>
                 <p class="step-description">Click any review and our AI creates a personalized response in seconds. Choose your tone — professional, friendly, or apologetic.</p>
-                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/>
-                    <path d="M12 6v6l4 2"/>
-                </svg>
             </div>
             
             <div class="step-card">
                 <div class="step-number">3</div>
                 <h3 class="step-title">Copy, Edit & Publish</h3>
                 <p class="step-description">Review the AI response, make any edits, then copy to clipboard or publish directly. It's that simple.</p>
-                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
             </div>
         </div>
     </section>
@@ -986,11 +1008,12 @@
     <section class="landing-features" id="features">
         <div class="section-header">
             <span class="section-label">Features</span>
-            <h2 class="section-title">Everything You Need</h2>
+            <h2 class="section-title">Everything You Need to Succeed</h2>
             <p class="section-subtitle">Powerful tools to manage your online reputation with ease</p>
         </div>
         
         <div class="features-grid">
+            <!-- AI Response Generation -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -998,21 +1021,59 @@
                         <path d="M12 6v6l4 2"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">10x Faster</h3>
-                <p class="feature-description">Generate professional responses in seconds. What took 10 minutes now takes 10 seconds.</p>
+                <h3 class="feature-title">🤖 AI Response Generation</h3>
+                <p class="feature-description">Generate human-like responses in seconds. Choose from GPT-4o, Claude, Gemini, or open-source models via OpenRouter.</p>
             </div>
             
+            <!-- Multi AI Providers -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2a10 10 0 1 0 10 10H12V2z"/>
-                        <path d="M21 12a9 9 0 0 0-9-9v9l9 9"/>
+                        <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">AI-Powered Intelligence</h3>
-                <p class="feature-description">Smart responses that match your tone, acknowledge feedback, and invite customers back.</p>
+                <h3 class="feature-title">🔄 Multiple AI Providers</h3>
+                <p class="feature-description">Use OpenAI, Anthropic Claude, Google Gemini, Meta Llama, Mistral, or MiniMax. Switch anytime based on your needs.</p>
             </div>
             
+            <!-- Google & Yelp Sync -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <polyline points="1 20 1 14 7 14"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">🔗 Google & Yelp Sync</h3>
+                <p class="feature-description">Automatically sync reviews from Google Business and Yelp. Real-time updates when new reviews come in.</p>
+            </div>
+            
+            <!-- Email Notifications -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">📧 Smart Notifications</h3>
+                <p class="feature-description">Get email alerts for new reviews and urgent alerts for negative reviews. Never miss a customer complaint.</p>
+            </div>
+            
+            <!-- Review Request Automation -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">📩 Review Request Emails</h3>
+                <p class="feature-description">Automatically request reviews from happy customers. Grow your review count effortlessly with pre-built email templates.</p>
+            </div>
+            
+            <!-- Sentiment Analysis -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1022,10 +1083,24 @@
                         <line x1="15" y1="9" x2="15.01" y2="9"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">Sentiment Analysis</h3>
-                <p class="feature-description">Automatically detects positive, neutral, and negative reviews. Respond appropriately every time.</p>
+                <h3 class="feature-title">🎯 Sentiment Analysis</h3>
+                <p class="feature-description">Automatically detects positive, neutral, and negative reviews. AI adapts the response tone accordingly.</p>
             </div>
             
+            <!-- Analytics Dashboard -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">📊 Analytics Dashboard</h3>
+                <p class="feature-description">Track review trends, sentiment over time, rating distribution, and response metrics. Make data-driven decisions.</p>
+            </div>
+            
+            <!-- Multi-Location -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1034,10 +1109,25 @@
                         <line x1="9" y1="21" x2="9" y2="9"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">Multi-Location</h3>
-                <p class="feature-description">Manage reviews for all your locations from one dashboard. Perfect for franchises.</p>
+                <h3 class="feature-title">🏢 Multi-Location Support</h3>
+                <p class="feature-description">Manage reviews for all your locations from one dashboard. Perfect for franchises and agencies.</p>
             </div>
             
+            <!-- Team Management -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">👥 Team Management</h3>
+                <p class="feature-description">Invite team members with role-based permissions. Admins, managers, and viewers — collaborate efficiently.</p>
+            </div>
+            
+            <!-- Response Templates -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1047,18 +1137,60 @@
                         <line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">CSV Import</h3>
-                <p class="feature-description">Easily import reviews from Google and Yelp. Get started in minutes.</p>
+                <h3 class="feature-title">📝 Response Templates</h3>
+                <p class="feature-description">Fallback templates work even without AI configured. Professional responses for every sentiment and tone.</p>
             </div>
             
+            <!-- Usage Tracking -->
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">Response History</h3>
-                <p class="feature-description">Keep track of all your responses. Regenerate or edit previous responses anytime.</p>
+                <h3 class="feature-title">📈 Usage Tracking</h3>
+                <p class="feature-description">Track your monthly AI usage with clear limits. Know exactly how many responses you've generated.</p>
+            </div>
+            
+            <!-- Secure & Private -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">🔒 Secure & Private</h3>
+                <p class="feature-description">Your data is encrypted and secure. API keys stored safely. GDPR compliant data handling.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Integrations -->
+    <section class="how-it-works" id="integrations">
+        <div class="section-header">
+            <span class="section-label">Integrations</span>
+            <h2 class="section-title">Connect Your Favorite Tools</h2>
+            <p class="section-subtitle">Seamlessly integrate with the platforms you already use</p>
+        </div>
+        
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">🔍</div>
+                <h3 class="step-title">Google Places</h3>
+                <p class="step-description">Search and sync reviews from Google Business Profile. Automatic detection of your business locations.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">⭐</div>
+                <h3 class="step-title">Yelp Fusion</h3>
+                <p class="step-description">Connect your Yelp Business account to sync reviews directly. Import historical reviews with one click.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">🤖</div>
+                <h3 class="step-title">AI Models</h3>
+                <p class="step-description">OpenRouter unifies GPT-4, Claude, Gemini, Llama, Mistral, and MiniMax. Choose the best model for your budget.</p>
             </div>
         </div>
     </section>
@@ -1086,7 +1218,7 @@
             
             <div class="testimonial-card">
                 <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-text">"Managing reviews across 5 locations used to be a nightmare. Now I handle everything from one dashboard in minutes. Absolutely essential for our franchise."</p>
+                <p class="testimonial-text">"Managing reviews across 5 locations used to be a nightmare. Now I handle everything from one dashboard in minutes. The team management feature is a game changer for our franchise."</p>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">S</div>
                     <div class="testimonial-info">
@@ -1098,7 +1230,7 @@
             
             <div class="testimonial-card">
                 <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-text">"The sentiment analysis is spot-on. It automatically knows when I need to be apologetic versus celebratory. Game changer for our dental practice."</p>
+                <p class="testimonial-text">"The sentiment analysis is spot-on. It automatically knows when I need to be apologetic versus celebratory. The email alerts for negative reviews have helped us recover customers."</p>
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">D</div>
                     <div class="testimonial-info">
@@ -1140,9 +1272,17 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                         Basic sentiment analysis
                     </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Analytics dashboard
+                    </li>
                     <li class="disabled">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        Google/Yelp import
+                        Google/Yelp sync
+                    </li>
+                    <li class="disabled">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Team management
                     </li>
                 </ul>
                 <a href="/register" class="btn btn-glass pricing-cta">Get Started</a>
@@ -1164,15 +1304,23 @@
                     </li>
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        Google & Yelp import
+                        Google & Yelp auto-sync
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Email notifications
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Review request emails
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Team management
                     </li>
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                         Priority support
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        Export reports
                     </li>
                 </ul>
                 <a href="/register" class="btn btn-primary-gradient pricing-cta">Start 14-Day Trial</a>
@@ -1191,14 +1339,27 @@
         <div class="faq-grid">
             <div class="faq-item active">
                 <button class="faq-question">
-                    How does the AI generate responses?
+                    Which AI models can I use?
                     <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                 </button>
                 <div class="faq-answer">
-                    <p>Our AI uses advanced language models to analyze the sentiment and content of each review, then generates a personalized response that matches your preferred tone — professional, friendly, or apologetic. The responses reference specific details from the review to sound human and genuine.</p>
+                    <p>You can use any model through OpenRouter: GPT-4o, GPT-4o Mini, Claude 3.5 Sonnet, Gemini Pro 1.5, Llama 3, Mistral 7B, and MiniMax models. Choose based on your budget and needs. You can also use MiniMax directly for even lower costs.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    How does the Google and Yelp sync work?
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                </button>
+                <div class="faq-answer">
+                    <p>On the Pro plan, you connect your Google Business Profile and Yelp account using API keys. We then automatically sync all your reviews every few hours. New reviews appear in your dashboard instantly with notifications.</p>
                 </div>
             </div>
             
@@ -1217,40 +1378,27 @@
             
             <div class="faq-item">
                 <button class="faq-question">
-                    What happens when I hit my monthly limit?
+                    How does team management work?
                     <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                 </button>
                 <div class="faq-answer">
-                    <p>On the free plan, once you reach 10 AI responses, you'll need to wait until next month or upgrade to Pro for unlimited responses. Your existing reviews and responses are always saved and accessible.</p>
+                    <p>Invite team members and assign roles: Admins get full access, Managers can handle reviews and responses, and Viewers can see everything but can't make changes. Perfect for agencies managing multiple clients.</p>
                 </div>
             </div>
             
             <div class="faq-item">
                 <button class="faq-question">
-                    Can I cancel my subscription anytime?
+                    What are review request emails?
                     <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                 </button>
                 <div class="faq-answer">
-                    <p>Yes, you can cancel your Pro subscription at any time with no penalties or hidden fees. You'll continue to have Pro access until the end of your billing period, then automatically revert to the free plan.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <button class="faq-question">
-                    Does it work with Google and Yelp?
-                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                </button>
-                <div class="faq-answer">
-                    <p>Yes! On the Pro plan, you can connect your Google Business and Yelp accounts for automatic review syncing. The free plan supports CSV import from both platforms.</p>
+                    <p>Pro users can send review request emails to their customers asking for reviews. We provide pre-built email templates that you can customize. This helps grow your review count organically.</p>
                 </div>
             </div>
         </div>
