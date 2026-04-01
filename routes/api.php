@@ -50,6 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Usage
     Route::get('/usage', [UsageController::class, 'index']);
 
+    // Subscription
+    Route::get('/subscription', [SubscriptionController::class, 'show']);
+    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout']);
+
     // Integrations
     Route::get('/integrations/status', [IntegrationController::class, 'status']);
     Route::post('/integrations/google/search', [IntegrationController::class, 'searchGoogle']);
