@@ -47,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index']);
 
+    // Usage
+    Route::get('/usage', [UsageController::class, 'index']);
+
     // Integrations
     Route::get('/integrations/status', [IntegrationController::class, 'status']);
     Route::post('/integrations/google/search', [IntegrationController::class, 'searchGoogle']);
