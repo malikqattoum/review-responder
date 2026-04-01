@@ -17,6 +17,12 @@
     </div>
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script>
+        // Fallback if local jQuery fails to load
+        if (typeof jQuery === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"><\/script>');
+        }
+    </script>
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>
