@@ -148,27 +148,33 @@ function getSourceBadge(source) {
 // ============================================
 
 function login(email, password) {
-    return apiRequest('POST', '/login', { email, password })
+    apiRequest('POST', '/login', { email, password })
         .then(data => {
             setToken(data.token);
             setUser(data.user);
             showToast('Login successful!', 'success');
             window.location.href = '/dashboard';
+        })
+        .catch(err => {
+            showToast(err.message || 'Login failed', 'error');
         });
 }
 
 function register(name, email, password, password_confirmation) {
-    return apiRequest('POST', '/register', { name, email, password, password_confirmation })
+    apiRequest('POST', '/register', { name, email, password, password_confirmation })
         .then(data => {
             setToken(data.token);
             setUser(data.user);
             showToast('Registration successful!', 'success');
             window.location.href = '/dashboard';
+        })
+        .catch(err => {
+            showToast(err.message || 'Registration failed', 'error');
         });
 }
 
 function logout() {
-    return apiRequest('POST', '/logout')
+    apiRequest('POST', '/logout')
         .catch(() => {})
         .finally(() => {
             removeToken();
@@ -495,7 +501,8 @@ function loadBusinesses() {
                 currentBusinessId = data.businesses[0].id;
                 loadReviews(currentBusinessId, currentFilter);
             }
-        });
+        })
+        .catch(() => {});
 }
 
 function renderBusinessSelector(businesses) {
@@ -538,7 +545,7 @@ function loadDashboardStats() {
         } else {
             $('#usage-bar-container').addClass('hidden');
         }
-    });
+    }).catch(() => {});
 }
 
 // ============================================
