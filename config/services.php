@@ -37,4 +37,16 @@ return [
         'fusion_api_key' => env('YELP_FUSION_API_KEY'),
     ],
 
+    'ai' => [
+        'provider' => env('AI_PROVIDER', 'openrouter'),
+        
+        // OpenRouter (supports many models including MiniMax, OpenAI, Claude, etc.)
+        'openrouter_api_key' => env('OPENROUTER_API_KEY'),
+        'openrouter_model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
+        
+        // MiniMax (Chinese AI)
+        'minimax_api_key' => env('MINIMAX_API_KEY'),
+        'minimax_model' => env('MINIMAX_MODEL', 'minimax/-01'),
+    ],
+
 ];

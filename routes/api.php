@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Response
     Route::post('/responses/generate', [ResponseController::class, 'generate']);
     Route::get('/responses/templates', [ResponseController::class, 'templates']);
+    Route::get('/responses/provider', [ResponseController::class, 'getProvider']);
 
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index']);

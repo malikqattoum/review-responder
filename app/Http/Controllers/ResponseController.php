@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use App\Models\Response;
+use App\Services\AIService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ResponseController extends Controller
 {
+    protected AIService $aiService;
+
+    public function __construct()
+    {
+        $this->aiService = new AIService();
+    }
+
     public function generate(Request $request, Review $review)
     {
         $user = $request->user();
@@ -108,6 +115,15 @@ class ResponseController extends Controller
         ]);
     }
 
+    public function getProvider()
+    {
+        return response()->json([
+            'provider' => $this->aiService->getProviderName(),
+            'is_configured' => $this->aiService->isConfigured(),
+            'available_models' => $this->aiService->getAvailableModels(),
+        ]);
+    }
+
     private function getDefaultTone(Review $review): string
     {
         return match ($review->sentiment) {
@@ -119,41 +135,22 @@ class ResponseController extends Controller
 
     private function generateAIResponse(Review $review, string $tone): ?string
     {
-        $apiKey = config('services.openai.api_key');
-
-        if (!$apiKey || $apiKey === 'your_openai_api_key_here') {
-            // Return template response if no API key configured
+        if (!$this->aiService->isConfigured()) {
+            Log::info('AI not configured, using template response');
             return $this->getTemplateResponse($review, $tone);
         }
 
-        try {
-            $systemPrompt = $this->buildSystemPrompt($tone);
-            $userPrompt = $this->buildUserPrompt($review);
+        $systemPrompt = $this->buildSystemPrompt($tone);
+        $userPrompt = $this->buildUserPrompt($review);
 
-            $response = Http::withToken($apiKey)
-                ->timeout(30)
-                ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4o-mini',
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => $userPrompt],
-                    ],
-                    'max_tokens' => 200,
-                    'temperature' => 0.7,
-                ]);
+        $responseText = $this->aiService->generate($systemPrompt, $userPrompt);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                return $data['choices'][0]['message']['content'] ?? null;
-            }
-
-            Log::error('OpenAI API error', ['status' => $response->status(), 'body' => $response->body()]);
-            return $this->getTemplateResponse($review, $tone);
-
-        } catch (\Exception $e) {
-            Log::error('OpenAI request failed', ['error' => $e->getMessage()]);
+        if (!$responseText) {
+            Log::warning('AI generation failed, falling back to template');
             return $this->getTemplateResponse($review, $tone);
         }
+
+        return $responseText;
     }
 
     private function buildSystemPrompt(string $tone): string

@@ -163,7 +163,7 @@
 - **Backend:** Laravel 11 (PHP 8.2+)
 - **Frontend:** jQuery + custom CSS (no heavy framework)
 - **Database:** MySQL (existing server)
-- **AI:** OpenAI API (GPT-4o-mini for cost efficiency)
+- **AI:** OpenRouter API (supports OpenAI GPT-4o-mini, Claude, Gemini, MiniMax, Llama, Mistral)
 - **Auth:** Laravel Sanctum (token-based)
 - **Billing:** Stripe (subscriptions)
 
@@ -363,7 +363,7 @@ For initial build, implement:
 3. ✅ Business CRUD (single location for MVP)
 4. ✅ Review import (CSV only)
 5. ✅ Review list with sentiment badges
-6. ✅ AI response generation (OpenAI)
+6. ✅ AI response generation (OpenRouter / MiniMax)
 7. ✅ Response copy/edit/regenerate
 8. ✅ Response history
 9. ✅ Free tier with 10 review limit

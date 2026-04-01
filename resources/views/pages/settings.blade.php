@@ -151,17 +151,44 @@
                 <button class="btn btn-primary" onclick="saveIntegrationSettings()">Save Integration Settings</button>
             </div>
             
-            <!-- API Configuration -->
+            <!-- AI Configuration -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">⚙️ API Configuration</h3>
+                    <h3 class="card-title">🤖 AI Configuration</h3>
+                </div>
+                <div id="ai-status" style="margin-bottom: 16px; padding: 12px; background: var(--bg-secondary); border-radius: 8px;"></div>
+                <div class="form-group">
+                    <label class="form-label">AI Provider</label>
+                    <select id="ai-provider" class="form-select" onchange="updateAiModels()">
+                        <option value="openrouter">OpenRouter (Recommended - supports GPT, Claude, Gemini, MiniMax)</option>
+                        <option value="minimax">MiniMax (Chinese AI)</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">OpenAI API Key</label>
-                    <input type="password" id="openai-api-key" class="form-input" placeholder="sk-...">
-                    <p class="form-hint">Required for AI response generation. Get your key from <a href="https://platform.openai.com" target="_blank">OpenAI</a></p>
+                    <label class="form-label">OpenRouter API Key</label>
+                    <input type="password" id="openrouter-api-key" class="form-input" placeholder="sk-or-...">
+                    <p class="form-hint">Get your key from <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> - supports OpenAI, Claude, Gemini, MiniMax, and more</p>
                 </div>
-                <button class="btn btn-primary" onclick="saveApiKey()">Save API Key</button>
+                <div class="form-group">
+                    <label class="form-label">OpenRouter Model</label>
+                    <select id="openrouter-model" class="form-select">
+                        <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini (Fast, Cheap)</option>
+                        <option value="openai/gpt-4o">OpenAI GPT-4o (More Capable)</option>
+                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (Excellent Reasoning)</option>
+                        <option value="google/gemini-pro-1.5">Google Gemini Pro 1.5 (Long Context)</option>
+                        <option value="minimax/ministral-8b">MiniMax Ministral 8B (Fast, Chinese)</option>
+                        <option value="meta-llama/llama-3-8b-instruct">Meta Llama 3 8B (Open Source)</option>
+                        <option value="mistralai/mistral-7b-instruct">Mistral 7B (Balanced)</option>
+                    </select>
+                </div>
+                <div id="minimax-config" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">MiniMax API Key</label>
+                        <input type="password" id="minimax-api-key" class="form-input" placeholder="Your MiniMax API key">
+                        <p class="form-hint">Get your key from <a href="https://platform.minimax.chat/" target="_blank">MiniMax Platform</a></p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveAiSettings()">Save AI Settings</button>
             </div>
         </div>
     </main>
@@ -226,6 +253,22 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
+    checkAiStatus();
+    
+    // Pre-fill AI settings from localStorage
+    const savedProvider = localStorage.getItem('ai_provider') || 'openrouter';
+    $('#ai-provider').val(savedProvider);
+    updateAiModels();
+    
+    if (localStorage.getItem('openrouter_api_key')) {
+        $('#openrouter-api-key').val(localStorage.getItem('openrouter_api_key'));
+    }
+    if (localStorage.getItem('openrouter_model')) {
+        $('#openrouter-model').val(localStorage.getItem('openrouter_model'));
+    }
+    if (localStorage.getItem('minimax_api_key')) {
+        $('#minimax-api-key').val(localStorage.getItem('minimax_api_key'));
+    }
     
     // Account form
     $('#account-form').on('submit', function(e) {
@@ -478,6 +521,65 @@ function saveApiKey() {
     }
     localStorage.setItem('openai_api_key', apiKey);
     showToast('API key saved!', 'success');
+}
+
+function updateAiModels() {
+    const provider = $('#ai-provider').val();
+    if (provider === 'minimax') {
+        $('#minimax-config').show();
+        $('#openrouter-model').closest('.form-group').hide();
+        $('#openrouter-api-key').closest('.form-group').hide();
+    } else {
+        $('#minimax-config').hide();
+        $('#openrouter-model').closest('.form-group').show();
+        $('#openrouter-api-key').closest('.form-group').show();
+    }
+}
+
+function checkAiStatus() {
+    apiRequest('GET', '/responses/provider')
+        .then(data => {
+            const statusColor = data.is_configured ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+            const statusIcon = data.is_configured ? '✅' : '❌';
+            const statusText = data.is_configured ? 'Configured' : 'Not configured';
+            
+            $('#ai-status').html(`
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.5rem;">${statusIcon}</span>
+                    <div>
+                        <div style="font-weight: 600;">${data.provider}</div>
+                        <div style="font-size: 0.8125rem; color: var(--text-secondary);">${statusText}</div>
+                    </div>
+                </div>
+            `);
+        })
+        .catch(() => {
+            $('#ai-status').html('<span style="color: var(--text-muted);">Unable to check AI status</span>');
+        });
+}
+
+function saveAiSettings() {
+    const provider = $('#ai-provider').val();
+    const openrouterKey = $('#openrouter-api-key').val().trim();
+    const openrouterModel = $('#openrouter-model').val();
+    const minimaxKey = $('#minimax-api-key').val().trim();
+    
+    if (provider === 'openrouter' && !openrouterKey) {
+        showToast('OpenRouter API key is required', 'error');
+        return;
+    }
+    if (provider === 'minimax' && !minimaxKey) {
+        showToast('MiniMax API key is required', 'error');
+        return;
+    }
+    
+    localStorage.setItem('ai_provider', provider);
+    localStorage.setItem('openrouter_api_key', openrouterKey);
+    localStorage.setItem('openrouter_model', openrouterModel);
+    localStorage.setItem('minimax_api_key', minimaxKey);
+    
+    showToast('AI settings saved!', 'success');
+    checkAiStatus();
 }
 
 function saveIntegrationSettings() {
