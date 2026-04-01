@@ -77,7 +77,7 @@
             </div>
             
             <!-- API Configuration -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h3 class="card-title">⚙️ API Configuration</h3>
                 </div>
@@ -87,6 +87,31 @@
                     <p class="form-hint">Required for AI response generation. Get your key from <a href="https://platform.openai.com" target="_blank">OpenAI</a></p>
                 </div>
                 <button class="btn btn-primary" onclick="saveApiKey()">Save API Key</button>
+            </div>
+            
+            <!-- Integrations -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🔗 Integrations</h3>
+                </div>
+                
+                <!-- Google Integration -->
+                <div class="form-group">
+                    <label class="form-label">Google Places API Key</label>
+                    <input type="password" id="google-api-key" class="form-input" placeholder="AIzaSy...">
+                    <p class="form-hint">Enable automatic Google review syncing. <a href="https://console.cloud.google.com/apis/library/places.googleapis.com" target="_blank">Get API key</a></p>
+                </div>
+                
+                <!-- Yelp Integration -->
+                <div class="form-group">
+                    <label class="form-label">Yelp Fusion API Key</label>
+                    <input type="password" id="yelp-api-key" class="form-input" placeholder="yelp_fusion_api_key...">
+                    <p class="form-hint">Enable automatic Yelp review syncing. <a href="https://www.yelp.com/developers/v3/manage_api_keys" target="_blank">Get API key</a></p>
+                </div>
+                
+                <div id="integration-status" style="margin-top: 16px;"></div>
+                
+                <button class="btn btn-primary" onclick="saveIntegrationSettings()">Save Integration Settings</button>
             </div>
         </div>
     </main>
@@ -154,6 +179,9 @@ function loadSettings() {
             renderBusinessesList(data.businesses);
         })
         .catch(() => {});
+    
+    // Check integration status
+    checkIntegrationStatus();
 }
 
 function saveNotificationSettings() {
@@ -209,6 +237,54 @@ function saveApiKey() {
     // Save to localStorage for now (in production, this should be stored server-side)
     localStorage.setItem('openai_api_key', apiKey);
     showToast('API key saved!', 'success');
+}
+
+function saveIntegrationSettings() {
+    const googleKey = $('#google-api-key').val().trim();
+    const yelpKey = $('#yelp-api-key').val().trim();
+    
+    // Save to localStorage for now
+    if (googleKey) {
+        localStorage.setItem('google_api_key', googleKey);
+    }
+    if (yelpKey) {
+        localStorage.setItem('yelp_api_key', yelpKey);
+    }
+    
+    showToast('Integration settings saved!', 'success');
+    
+    // Check integration status
+    checkIntegrationStatus();
+}
+
+function checkIntegrationStatus() {
+    apiRequest('GET', '/integrations/status')
+        .then(data => {
+            const statusHtml = `
+                <div style="display: flex; gap: 24px; margin-top: 16px;">
+                    <div style="flex: 1; padding: 16px; background: ${data.google_configured ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">
+                            ${data.google_configured ? '✅' : '❌'} Google
+                        </div>
+                        <div style="font-size: 0.8125rem; color: var(--text-secondary);">
+                            ${data.google_configured ? 'Configured' : 'Not configured'}
+                        </div>
+                    </div>
+                    <div style="flex: 1; padding: 16px; background: ${data.yelp_configured ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">
+                            ${data.yelp_configured ? '✅' : '❌'} Yelp
+                        </div>
+                        <div style="font-size: 0.8125rem; color: var(--text-secondary);">
+                            ${data.yelp_configured ? 'Configured' : 'Not configured'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#integration-status').html(statusHtml);
+        })
+        .catch(() => {
+            $('#integration-status').html('<p style="color: var(--text-muted);">Unable to check integration status</p>');
+        });
 }
 
 function renderBusinessesList(businesses) {
