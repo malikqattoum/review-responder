@@ -22,7 +22,12 @@ function removeToken() {
 
 function getUser() {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    if (!user || user === 'undefined') return null;
+    try {
+        return JSON.parse(user);
+    } catch (e) {
+        return null;
+    }
 }
 
 function setUser(user) {
@@ -63,7 +68,14 @@ function apiRequest(method, endpoint, data = null) {
                 window.location.href = '/login';
                 throw new Error('Unauthorized');
             }
-            return response.json();
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            }
+            return { success: true };
         });
 }
 
