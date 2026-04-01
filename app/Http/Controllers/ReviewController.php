@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Business;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,11 +53,15 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'text' => 'nullable|string',
             'review_date' => 'nullable|date',
+            'send_notification' => 'boolean',
         ]);
+
+        $sendNotification = $validated['send_notification'] ?? true;
+        unset($validated['send_notification']);
 
         // Check if review already exists
         $existingReview = Review::where('business_id', $validated['business_id'])
-            ->where('external_id', $validated['external_id'])
+            ->where('external_id', $validated['external_id'] ?? null)
             ->first();
 
         if ($existingReview) {
@@ -68,6 +73,11 @@ class ReviewController extends Controller
 
         $review = Review::create($validated);
         $review->detectSentiment();
+
+        // Send notification to business owner
+        if ($sendNotification) {
+            $this->sendReviewNotifications($review);
+        }
 
         return response()->json([
             'review' => $review,
@@ -119,10 +129,17 @@ class ReviewController extends Controller
             'reviews.*.rating' => 'required|integer|min:1|max:5',
             'reviews.*.text' => 'nullable|string',
             'reviews.*.review_date' => 'nullable|date',
+            'send_notifications' => 'boolean',
         ]);
+
+        $sendNotifications = $validated['send_notifications'] ?? true;
+        
+        $business = Business::with('user')->findOrFail($validated['business_id']);
+        $user = $business->user;
 
         $imported = 0;
         $skipped = 0;
+        $newNegativeReviews = [];
 
         foreach ($validated['reviews'] as $reviewData) {
             $reviewData['business_id'] = $validated['business_id'];
@@ -140,12 +157,69 @@ class ReviewController extends Controller
             $review = Review::create($reviewData);
             $review->detectSentiment();
             $imported++;
+
+            // Track negative reviews for urgent alerts
+            if ($review->sentiment === 'negative' && $sendNotifications) {
+                $newNegativeReviews[] = $review;
+            }
+        }
+
+        // Send notifications
+        if ($sendNotifications && $user) {
+            // For batch imports, we send one summary notification
+            // Individual notifications are still sent for negative reviews
+            if ($imported > 0) {
+                $this->sendImportNotification($user, $business, $imported, $newNegativeReviews);
+            }
         }
 
         return response()->json([
             'message' => "Imported {$imported} reviews, skipped {$skipped} duplicates",
             'imported' => $imported,
             'skipped' => $skipped,
+            'new_negative_reviews' => count($newNegativeReviews),
         ]);
+    }
+
+    /**
+     * Send notifications for a new review
+     */
+    private function sendReviewNotifications(Review $review): void
+    {
+        try {
+            $business = $review->business;
+            if (!$business || !$business->user) {
+                return;
+            }
+
+            $user = $business->user;
+
+            // Send new review notification
+            $user->sendNewReviewNotification($review, $business->name);
+
+            // Send urgent alert for negative reviews
+            if ($review->sentiment === 'negative') {
+                $user->sendNegativeReviewAlert($review, $business->name);
+            }
+        } catch (\Exception $e) {
+            // Log but don't fail the request if notifications fail
+            \Log::warning('Failed to send review notification: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send notification after batch import
+     */
+    private function sendImportNotification(User $user, Business $business, int $count, array $negativeReviews): void
+    {
+        try {
+            // For negative reviews, send individual alerts
+            foreach ($negativeReviews as $review) {
+                $user->sendNegativeReviewAlert($review, $business->name);
+            }
+        } catch (\Exception $e) {
+            // Log but don't fail the request if notifications fail
+            \Log::warning('Failed to send import notification: ' . $e->getMessage());
+        }
     }
 }

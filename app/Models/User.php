@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\NegativeReviewAlert;
+use App\Notifications\NewReviewNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,6 +21,9 @@ class User extends Authenticatable
         'stripe_customer_id',
         'subscription_status',
         'subscription_tier',
+        'notify_new_reviews',
+        'notify_negative_reviews',
+        'notification_email',
     ];
 
     protected $hidden = [
@@ -30,15 +36,17 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'notify_new_reviews' => 'boolean',
+            'notify_negative_reviews' => 'boolean',
         ];
     }
 
-    public function businesses()
+    public function businesses(): HasMany
     {
         return $this->hasMany(Business::class);
     }
 
-    public function subscriptionUsages()
+    public function subscriptionUsages(): HasMany
     {
         return $this->hasMany(SubscriptionUsage::class);
     }
@@ -80,5 +88,34 @@ class User extends Authenticatable
         );
         
         $usage->increment('reviews_used');
+    }
+
+    public function getNotificationEmail(): string
+    {
+        return $this->notification_email ?? $this->email;
+    }
+
+    public function sendNewReviewNotification(Review $review, string $businessName): void
+    {
+        if (!$this->notify_new_reviews) {
+            return;
+        }
+
+        $this->notify(new NewReviewNotification($review, $businessName));
+    }
+
+    public function sendNegativeReviewAlert(Review $review, string $businessName): void
+    {
+        // Negative reviews always send alerts if enabled
+        if (!$this->notify_negative_reviews) {
+            return;
+        }
+
+        $this->notify(new NegativeReviewAlert($review, $businessName));
+    }
+
+    public function routeNotificationForMail(): string
+    {
+        return $this->getNotificationEmail();
     }
 }

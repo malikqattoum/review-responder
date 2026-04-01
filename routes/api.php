@@ -17,6 +17,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user', [AuthController::class, 'updateUser']);
+    Route::put('/user/notification-settings', [AuthController::class, 'updateNotificationSettings']);
 
     // Businesses
     Route::get('/businesses', [BusinessController::class, 'index']);

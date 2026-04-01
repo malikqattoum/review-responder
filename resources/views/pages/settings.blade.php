@@ -13,22 +13,34 @@
         </header>
         
         <div class="content">
+            <!-- Notifications Settings -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h3 class="card-title">Business Locations</h3>
-                    <button class="btn btn-primary btn-sm" onclick="showCreateBusinessModal()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Add Location
-                    </button>
+                    <h3 class="card-title">🔔 Notification Preferences</h3>
                 </div>
-                <div id="businesses-list">
-                    <div class="loading" style="margin: 20px auto;"></div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 16px; padding: 12px 0;">
+                    <input type="checkbox" id="notify-new-reviews" checked style="width: 20px; height: 20px;">
+                    <div>
+                        <label for="notify-new-reviews" style="font-weight: 600; cursor: pointer;">New Review Alerts</label>
+                        <p class="form-hint" style="margin: 0;">Get notified when new reviews are imported</p>
+                    </div>
                 </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 16px; padding: 12px 0; border-top: 1px solid var(--border);">
+                    <input type="checkbox" id="notify-negative-reviews" checked style="width: 20px; height: 20px;">
+                    <div>
+                        <label for="notify-negative-reviews" style="font-weight: 600; cursor: pointer;">🚨 Negative Review Alerts</label>
+                        <p class="form-hint" style="margin: 0;">Get urgent alerts for 1-2 star reviews</p>
+                    </div>
+                </div>
+                <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
+                    <label class="form-label">Notification Email</label>
+                    <input type="email" id="notification-email" class="form-input" placeholder="notifications@example.com (optional)">
+                    <p class="form-hint">Leave empty to use your account email</p>
+                </div>
+                <button class="btn btn-primary" onclick="saveNotificationSettings()">Save Notification Settings</button>
             </div>
             
+            <!-- Account Settings -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h3 class="card-title">Account Settings</h3>
@@ -43,19 +55,38 @@
                         <input type="email" id="settings-email" class="form-input" disabled>
                         <p class="form-hint">Email cannot be changed</p>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">Save Account Changes</button>
                 </form>
             </div>
             
+            <!-- Business Locations -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">🏢 Business Locations</h3>
+                    <button class="btn btn-primary btn-sm" onclick="showCreateBusinessModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Location
+                    </button>
+                </div>
+                <div id="businesses-list">
+                    <div class="loading" style="margin: 20px auto;"></div>
+                </div>
+            </div>
+            
+            <!-- API Configuration -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">API Configuration</h3>
+                    <h3 class="card-title">⚙️ API Configuration</h3>
                 </div>
                 <div class="form-group">
                     <label class="form-label">OpenAI API Key</label>
                     <input type="password" id="openai-api-key" class="form-input" placeholder="sk-...">
                     <p class="form-hint">Required for AI response generation. Get your key from <a href="https://platform.openai.com" target="_blank">OpenAI</a></p>
                 </div>
+                <button class="btn btn-primary" onclick="saveApiKey()">Save API Key</button>
             </div>
         </div>
     </main>
@@ -96,12 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Account form
     $('#account-form').on('submit', function(e) {
         e.preventDefault();
-        showToast('Settings saved (demo mode)', 'success');
-    });
-    
-    // OpenAI key form
-    $('#openai-api-key').on('change', function() {
-        showToast('API key saved (demo mode)', 'success');
+        saveAccountSettings();
     });
 });
 
@@ -110,12 +136,79 @@ function loadSettings() {
     if (user) {
         $('#settings-name').val(user.name);
         $('#settings-email').val(user.email);
+        
+        // Load notification settings from user object
+        if (user.notify_new_reviews !== undefined) {
+            $('#notify-new-reviews').prop('checked', user.notify_new_reviews);
+        }
+        if (user.notify_negative_reviews !== undefined) {
+            $('#notify-negative-reviews').prop('checked', user.notify_negative_reviews);
+        }
+        if (user.notification_email) {
+            $('#notification-email').val(user.notification_email);
+        }
     }
     
     apiRequest('GET', '/businesses')
         .then(data => {
             renderBusinessesList(data.businesses);
+        })
+        .catch(() => {});
+}
+
+function saveNotificationSettings() {
+    const notifyNew = $('#notify-new-reviews').is(':checked');
+    const notifyNegative = $('#notify-negative-reviews').is(':checked');
+    const notifyEmail = $('#notification-email').val().trim();
+    
+    apiRequest('PUT', '/user/notification-settings', {
+        notify_new_reviews: notifyNew,
+        notify_negative_reviews: notifyNegative,
+        notification_email: notifyEmail || null
+    })
+    .then(data => {
+        showToast('Notification settings saved!', 'success');
+        // Update local user object
+        const user = getUser();
+        user.notify_new_reviews = notifyNew;
+        user.notify_negative_reviews = notifyNegative;
+        user.notification_email = notifyEmail || null;
+        setUser(user);
+    })
+    .catch(err => {
+        showToast('Failed to save settings', 'error');
+    });
+}
+
+function saveAccountSettings() {
+    const name = $('#settings-name').val().trim();
+    
+    if (!name) {
+        showToast('Name is required', 'error');
+        return;
+    }
+    
+    apiRequest('PUT', '/user', { name })
+        .then(data => {
+            showToast('Account settings saved!', 'success');
+            setUser(data.user);
+        })
+        .catch(err => {
+            showToast('Failed to save settings', 'error');
         });
+}
+
+function saveApiKey() {
+    const apiKey = $('#openai-api-key').val().trim();
+    
+    if (!apiKey) {
+        showToast('API key is required', 'error');
+        return;
+    }
+    
+    // Save to localStorage for now (in production, this should be stored server-side)
+    localStorage.setItem('openai_api_key', apiKey);
+    showToast('API key saved!', 'success');
 }
 
 function renderBusinessesList(businesses) {

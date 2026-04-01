@@ -81,4 +81,36 @@ class AuthController extends Controller
             'user' => $user,
         ]);
     }
+
+    public function updateUser(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json([
+            'user' => $user->fresh(),
+            'message' => 'User updated successfully',
+        ]);
+    }
+
+    public function updateNotificationSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'notify_new_reviews' => 'boolean',
+            'notify_negative_reviews' => 'boolean',
+            'notification_email' => 'nullable|email|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json([
+            'user' => $user->fresh(),
+            'message' => 'Notification settings updated successfully',
+        ]);
+    }
 }
