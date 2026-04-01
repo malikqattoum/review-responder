@@ -62,20 +62,24 @@ function apiRequest(method, endpoint, data = null) {
     }
     
     return fetch(`${API_BASE}${endpoint}`, options)
-        .then(response => {
+        .then(async response => {
             if (response.status === 401) {
                 logout();
                 window.location.href = '/login';
                 throw new Error('Unauthorized');
             }
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
-            }
             const contentType = response.headers.get('content-type');
+            let data;
             if (contentType && contentType.includes('application/json')) {
-                return response.json();
+                data = await response.json();
             }
-            return { success: true };
+            
+            if (!response.ok) {
+                const errorMsg = data?.message || data?.errors?.email?.[0] || data?.errors?.password?.[0] || `API Error: ${response.status}`;
+                throw new Error(errorMsg);
+            }
+            
+            return data || { success: true };
         });
 }
 
