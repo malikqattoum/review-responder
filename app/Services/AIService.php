@@ -57,11 +57,28 @@ class AIService
     }
 
     /**
-     * Check if the service is configured
+     * Check if the service is configured with a real API key
      */
     public function isConfigured(): bool
     {
-        return !empty($this->apiKey);
+        if (empty($this->apiKey)) {
+            return false;
+        }
+        
+        // Check for placeholder values
+        $placeholders = [
+            'your_openrouter_api_key_here',
+            'your_minimax_api_key_here',
+            'sk-your-',
+        ];
+        
+        foreach ($placeholders as $placeholder) {
+            if (str_contains($this->apiKey, $placeholder)) {
+                return false;
+            }
+        }
+        
+        return strlen($this->apiKey) > 10;
     }
 
     /**

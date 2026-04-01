@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/businesses/{business}', [BusinessController::class, 'update']);
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy']);
     Route::post('/businesses/{business}/responses', [ResponseController::class, 'generate']);
+    Route::post('/reviews/{review}/generate', [ResponseController::class, 'generate']);
 
     // Reviews
     Route::get('/reviews', [ReviewController::class, 'index']);
